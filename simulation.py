@@ -1,43 +1,22 @@
-import random
-# inputs
-# t = alotted number of trials
-# q = the amount of computing resources owned by attacker
-# z = the number of blocks that the attacker is behind
+import math
+def get_probability(blocks_behind: int, attacker_resources: float, sum=0, index=0):
+    # y is lambda
+    honest_resources = 1 - attacker_resources
+    y = blocks_behind * (attacker_resources / honest_resources)
+    poisson_density = (y**index * math.exp(-y))/ math.factorial(index)
+    catchup_probability = 1 - ((attacker_resources / honest_resources)**(blocks_behind - index))
+    new_sum = sum + (poisson_density * catchup_probability)
+    if index < blocks_behind:
+        return get_probability(blocks_behind, attacker_resources, sum=new_sum, index=index + 1)
+    else:
+        return(1 - new_sum)
 
-def does_hacker_win(z, target):
-    count = 0
-    while ( count < 100 ):    
-        random_num = random.randrange(0, 99)
-        if random_num < target:
-            z = z - 1
-            # winner, decrement z
-        else:
-            z = z + 1
-            # loser, increment count
-        if z == 0:
-            return(True)
-        count = count + 1
-    return(False)
-
-q = .40
-target = q * 100
-z = 5
-t = 10000
-
-# calculate poisson
-p = 1 - q
-
-
-
-# for each trial, pick random number between 0 and 99. 
-# if number is less than target, the attacker wins the block and z is decremented
-# otherwise, z is incremented
-
-count = 0 
-wins = 0
-while (count < t):
-    if does_hacker_win(z, target):
-        wins = wins + 1
-    count = count + 1
-probability_of_catching_up = wins / t
-print(f"z={z} P={probability_of_catching_up}")
+q = 0.1
+z_nums = 11
+z_inc = 1
+print(f"q={q}")
+for i in range(z_nums):
+    z = i * z_inc
+    surpass = z + 1
+    probability = get_probability(surpass, q)
+    print(f"z={z} P={probability}")
