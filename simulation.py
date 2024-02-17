@@ -11,12 +11,12 @@ def get_probability(blocks_behind: int, attacker_resources: float, sum=0, index=
     else:
         return(1 - new_sum)
 
-q = 0.1
+q = 0.32
 z_nums = 11
 z_inc = 1
 print(f"q={q}")
 for i in range(z_nums):
     z = i * z_inc
-    surpass = z + 1
-    probability = get_probability(surpass, q)
+    #surpass = z + 1
+    probability = get_probability(z, q)
     print(f"z={z} P={probability}")
